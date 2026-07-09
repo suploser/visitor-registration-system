@@ -1,9 +1,10 @@
 /* 访客告知书样式 */
 .page-notice {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: #fff;
+  overflow: hidden;
 }
 
 .notice-content {
@@ -18,10 +19,12 @@
   line-height: 1.8;
 }
 
+/* 底部操作区 — 固定，始终可见 */
 .agree-section {
-  padding: 30rpx;
+  padding: 24rpx 30rpx;
   border-top: 1rpx solid #eee;
   background: #fafafa;
+  flex-shrink: 0;
 }
 
 .agree-checkbox {
@@ -54,8 +57,9 @@
 }
 
 .footer-section {
-  padding: 20rpx 30rpx 40rpx;
+  padding: 0 30rpx 40rpx;
   background: #fff;
+  flex-shrink: 0;
 }
 
 /* 倒计时期间按钮置灰 */
