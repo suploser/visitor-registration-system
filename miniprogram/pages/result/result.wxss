@@ -1,0 +1,116 @@
+/* 审批结果页样式 */
+.page-result {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20rpx;
+}
+
+.status-card {
+  text-align: center;
+  padding: 60rpx 40rpx;
+}
+
+.status-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+  color: #333;
+}
+
+.status-title.success { color: #27ae60; }
+.status-title.danger { color: #e74c3c; }
+
+.status-desc {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.status-info text {
+  display: block;
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+/* 凭证 */
+.credential-badge {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.credential-box {
+  background: #f8fdf5;
+  border: 3rpx solid #27ae60;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-top: 24rpx;
+}
+
+.credential-header {
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+  color: #fff;
+  padding: 20rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  letter-spacing: 8rpx;
+}
+
+.credential-body {
+  padding: 30rpx;
+  text-align: left;
+}
+
+.credential-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx dashed #d4efdf;
+}
+
+.credential-row:last-child {
+  border-bottom: none;
+}
+
+.credential-label {
+  font-size: 26rpx;
+  color: #888;
+  flex-shrink: 0;
+  width: 140rpx;
+}
+
+.credential-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+}
+
+.credential-footer {
+  background: #f0f9f4;
+  padding: 16rpx 30rpx;
+  border-top: 1rpx solid #d4efdf;
+}
+
+.expire-tip {
+  font-size: 24rpx;
+  color: #e67e22;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.sub-text {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}

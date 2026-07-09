@@ -1,0 +1,134 @@
+<!-- 访客登记页 -->
+<view class="page-register">
+  <scroll-view scroll-y="true" class="form-scroll">
+    <!-- 基本信息 -->
+    <view class="card">
+      <view class="card-title">访客信息</view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>姓名</view>
+        <input class="form-input" placeholder="请输入访客姓名" bindinput="onInput" data-field="name" value="{{form.name}}" maxlength="20" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>手机号</view>
+        <input class="form-input" type="number" placeholder="请输入手机号" bindinput="onInput" data-field="phone" value="{{form.phone}}" maxlength="11" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>身份证号码</view>
+        <input class="form-input" placeholder="请输入18位身份证号" bindinput="onInput" data-field="id_number" value="{{form.id_number}}" maxlength="18" />
+      </view>
+    </view>
+
+    <!-- 接待信息 -->
+    <view class="card">
+      <view class="card-title">接待信息</view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>接待人</view>
+        <input class="form-input" placeholder="请输入接待人姓名" bindinput="onInput" data-field="host_name" value="{{form.host_name}}" maxlength="20" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>接待人部门</view>
+        <picker mode="selector" range="{{departments}}" range-key="name" bindchange="onDeptChange">
+          <view class="picker {{form.host_department ? '' : 'placeholder'}}">
+            {{form.host_department || '请选择接待人部门'}}
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 访问信息 -->
+    <view class="card">
+      <view class="card-title">访问信息</view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>访问开始时间</view>
+        <picker mode="multiSelector" range="{{dateTimeRange}}" bindchange="onStartTimeChange" bindcolumnchange="onDateTimeColumnChange">
+          <view class="picker {{form.visit_start ? '' : 'placeholder'}}">
+            {{form.visit_start || '请选择访问开始时间'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>访问预计结束时间</view>
+        <picker mode="multiSelector" range="{{dateTimeRange}}" bindchange="onEndTimeChange">
+          <view class="picker {{form.visit_end ? '' : 'placeholder'}}">
+            {{form.visit_end || '请选择访问结束时间'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>访问地点</view>
+        <input class="form-input" placeholder="请输入访问地点" bindinput="onInput" data-field="visit_location" value="{{form.visit_location}}" maxlength="100" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>访问目的</view>
+        <picker mode="selector" range="{{visitPurposes}}" bindchange="onPurposeChange">
+          <view class="picker {{form.visit_purpose ? '' : 'placeholder'}}">
+            {{form.visit_purpose || '请选择访问目的'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>来访人数</view>
+        <input class="form-input" type="number" placeholder="请输入来访人数" bindinput="onInput" data-field="visitor_count" value="{{form.visitor_count}}" maxlength="3" />
+      </view>
+    </view>
+
+    <!-- 同行人信息（来访人数>1时显示） -->
+    <view class="card" wx:if="{{form.visitor_count > 1}}">
+      <view class="card-title">同行人信息</view>
+      <view wx:for="{{form.companions}}" wx:key="index" class="companion-item">
+        <view class="companion-header">
+          <text>同行人 {{index + 1}}</text>
+          <text class="companion-del" bindtap="removeCompanion" data-index="{{index}}">删除</text>
+        </view>
+        <view class="form-group">
+          <view class="form-label">姓名</view>
+          <input class="form-input" placeholder="同行人姓名" bindinput="onCompanionInput" data-index="{{index}}" data-field="name" value="{{item.name}}" />
+        </view>
+        <view class="form-group">
+          <view class="form-label">身份证号</view>
+          <input class="form-input" placeholder="同行人身份证号" bindinput="onCompanionInput" data-index="{{index}}" data-field="id_number" value="{{item.id_number}}" maxlength="18" />
+        </view>
+      </view>
+      <button class="btn btn-outline btn-sm" wx:if="{{form.companions.length < form.visitor_count - 1}}" bindtap="addCompanion">+ 添加同行人</button>
+    </view>
+
+    <!-- 信息设备 -->
+    <view class="card">
+      <view class="card-title">信息设备</view>
+      <view class="form-group">
+        <view class="form-label">是否携带信息设备</view>
+        <view class="switch-row">
+          <switch checked="{{form.has_device}}" bindchange="onSwitchDevice" color="#1a73e8" />
+          <text>{{form.has_device ? '是' : '否'}}</text>
+        </view>
+      </view>
+      <view class="form-group" wx:if="{{form.has_device}}">
+        <view class="form-label">设备名称型号</view>
+        <input class="form-input" placeholder="请输入信息设备名称和型号" bindinput="onInput" data-field="device_info" value="{{form.device_info}}" />
+      </view>
+    </view>
+
+    <!-- 车牌号 -->
+    <view class="card">
+      <view class="card-title">车辆信息</view>
+      <license-plate bind:change="onPlateChange" value="{{form.license_plates}}" />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <button class="btn btn-primary" bindtap="submitForm" loading="{{submitting}}">
+        确认提交
+      </button>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,4 @@
+<!-- 同行人表单组件 -->
+<view class="companion-component">
+  <slot></slot>
+</view>

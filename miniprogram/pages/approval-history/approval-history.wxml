@@ -1,0 +1,38 @@
+<!-- 审批记录页（审批人查看历史记录） -->
+<view class="page-approval-history">
+  <view class="header-bar">
+    <text class="header-title">审批记录</text>
+  </view>
+
+  <view class="empty-state" wx:if="{{records.length === 0 && !loading}}">
+    <view class="empty-icon">📊</view>
+    <text>暂无审批记录</text>
+  </view>
+
+  <view class="list-container" wx:for="{{records}}" wx:key="id">
+    <view class="record-card card">
+      <view class="record-header">
+        <view class="visitor-name">{{item.visitor_name || '未知'}}</view>
+        <view class="tag {{item.result === 'approved' ? 'tag-approved' : 'tag-rejected'}}">
+          {{item.result === 'approved' ? '通过' : '拒绝'}}
+        </view>
+      </view>
+      <view class="record-info">
+        <view class="info-row">
+          <text class="info-label">接待部门：</text>
+          <text>{{item.host_department || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">审批角色：</text>
+          <text>{{item.approver_role === 'level1' ? '一级审批' : '二级审批'}}</text>
+        </view>
+      </view>
+      <view class="record-comment" wx:if="{{item.comment}}">
+        <text class="comment-label">意见：</text>{{item.comment}}
+      </view>
+      <view class="record-time">{{item.approved_at}}</view>
+    </view>
+  </view>
+
+  <view class="loading-more" wx:if="{{loading}}">加载中...</view>
+</view>

@@ -1,0 +1,4 @@
+/* 同行人表单组件 */
+.companion-component {
+  width: 100%;
+}

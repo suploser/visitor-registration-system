@@ -1,0 +1,71 @@
+/* 审批人录入页样式 */
+.page-register {
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-box, .error-box, .success-box {
+  text-align: center;
+  padding: 60rpx;
+}
+
+.loading-icon, .error-icon, .success-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.error-title, .success-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.error-desc, .success-desc {
+  font-size: 26rpx;
+  color: #999;
+  display: block;
+}
+
+.form-box {
+  width: 100%;
+  padding: 40rpx;
+}
+
+.role-tag {
+  display: inline-block;
+  padding: 6rpx 24rpx;
+  background: #e8f0fe;
+  color: #1a73e8;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  margin-bottom: 30rpx;
+}
+
+.auth-section {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.auth-desc {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 30rpx;
+}
+
+.code-input {
+  font-size: 44rpx !important;
+  letter-spacing: 16rpx;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+}

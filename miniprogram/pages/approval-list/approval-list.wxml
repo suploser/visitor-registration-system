@@ -1,0 +1,53 @@
+<!-- 待审批列表（仅审批人可见） -->
+<view class="page-approval-list">
+  <view class="header-bar">
+    <text class="header-title">待审批列表</text>
+    <text class="header-role">{{roleText}}</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{list.length === 0 && !loading}}">
+    <view class="empty-icon">📭</view>
+    <text>暂无待审批事项</text>
+  </view>
+
+  <!-- 审批列表 -->
+  <view class="list-container" wx:for="{{list}}" wx:key="id">
+    <view class="approval-card card" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="card-header">
+        <view class="visitor-name">{{item.name}}</view>
+        <view class="tag tag-pending">待审批</view>
+      </view>
+      <view class="card-info">
+        <view class="info-row">
+          <text class="info-label">接待人：</text>
+          <text>{{item.host_name}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">接待部门：</text>
+          <text>{{item.host_department}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">来访时间：</text>
+          <text>{{item.visit_start}} 至 {{item.visit_end}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">来访人数：</text>
+          <text>{{item.visitor_count}}人</text>
+        </view>
+        <view class="info-row" wx:if="{{item.license_plates_text}}">
+          <text class="info-label">车牌号：</text>
+          <text>{{item.license_plates_text}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">提交时间：</text>
+          <text>{{item.created_at}}</text>
+        </view>
+      </view>
+      <view class="card-arrow">查看详情 ›</view>
+    </view>
+  </view>
+
+  <!-- Loading -->
+  <view class="loading-more" wx:if="{{loading}}">加载中...</view>
+</view>

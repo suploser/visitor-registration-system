@@ -1,0 +1,98 @@
+<!-- 审批详情页（审批人查看并审批） -->
+<view class="page-approval-detail">
+  <!-- 访客基本信息 -->
+  <view class="card">
+    <view class="card-title">访客信息</view>
+    <view class="detail-grid">
+      <view class="detail-item">
+        <text class="detail-label">姓名</text>
+        <text class="detail-value">{{detail.name}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">手机号</text>
+        <text class="detail-value">{{detail.phone}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">身份证号</text>
+        <text class="detail-value">{{detail.id_number}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">车牌号</text>
+        <text class="detail-value">{{detail.license_plates_text || '无'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 接待与访问信息 -->
+  <view class="card">
+    <view class="card-title">访问信息</view>
+    <view class="detail-grid">
+      <view class="detail-item">
+        <text class="detail-label">接待人</text>
+        <text class="detail-value">{{detail.host_name}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">接待部门</text>
+        <text class="detail-value">{{detail.host_department}}</text>
+      </view>
+      <view class="detail-item full-width">
+        <text class="detail-label">访问时间</text>
+        <text class="detail-value">{{detail.visit_start}} 至 {{detail.visit_end}}</text>
+      </view>
+      <view class="detail-item full-width">
+        <text class="detail-label">访问地点</text>
+        <text class="detail-value">{{detail.visit_location}}</text>
+      </view>
+      <view class="detail-item full-width">
+        <text class="detail-label">访问目的</text>
+        <text class="detail-value">{{detail.visit_purpose}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">来访人数</text>
+        <text class="detail-value">{{detail.visitor_count}}人</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">信息设备</text>
+        <text class="detail-value">{{detail.has_device ? detail.device_info : '无'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 同行人信息 -->
+  <view class="card" wx:if="{{detail.companions && detail.companions.length > 0}}">
+    <view class="card-title">同行人</view>
+    <view class="companion-list" wx:for="{{detail.companions}}" wx:key="id">
+      <view class="companion-row">
+        <text>{{index + 1}}. {{item.name}}</text>
+        <text class="companion-id">{{item.id_number}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 审批历史 -->
+  <view class="card" wx:if="{{detail.approval_records && detail.approval_records.length > 0}}">
+    <view class="card-title">审批记录</view>
+    <view class="record-item" wx:for="{{detail.approval_records}}" wx:key="id">
+      <view class="record-header">
+        <text>{{item.approver_name}}（{{item.approver_role === 'level1' ? '一级审批' : '二级审批'}}）</text>
+        <text class="tag {{item.result === 'approved' ? 'tag-approved' : 'tag-rejected'}}">
+          {{item.result === 'approved' ? '通过' : '拒绝'}}
+        </text>
+      </view>
+      <view class="record-comment" wx:if="{{item.comment}}">{{item.comment}}</view>
+      <view class="record-time">{{item.approved_at}}</view>
+    </view>
+  </view>
+
+  <!-- 审批操作区 -->
+  <view class="action-bar" wx:if="{{canAct}}">
+    <view class="form-group">
+      <view class="form-label">审批意见</view>
+      <textarea class="form-textarea" placeholder="请输入审批意见（拒绝时必填）" bindinput="onCommentInput" value="{{comment}}" maxlength="500" />
+    </view>
+    <view class="action-buttons">
+      <button class="btn btn-danger" style="flex: 1" bindtap="doReject">拒绝</button>
+      <button class="btn btn-primary" style="flex: 1; margin-left: 20rpx" bindtap="doApprove">通过</button>
+    </view>
+  </view>
+</view>

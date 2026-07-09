@@ -1,0 +1,24 @@
+<!-- 自定义 TabBar - 根据角色显示不同菜单 -->
+<view class="tab-bar">
+  <view class="tab-bar-border"></view>
+
+  <!-- 访客 tabs -->
+  <block wx:if="{{role === 'visitor' || !role}}">
+    <view class="tab-item" wx:for="{{visitorTabs}}" wx:key="index"
+          data-path="{{item.pagePath}}" data-index="{{index}}"
+          bindtap="switchTab">
+      <view class="tab-icon tab-icon-{{item.icon}} {{selected === index ? 'active' : ''}}"></view>
+      <text class="tab-text {{selected === index ? 'active' : ''}}">{{item.text}}</text>
+    </view>
+  </block>
+
+  <!-- 审批人 tabs -->
+  <block wx:else>
+    <view class="tab-item" wx:for="{{approverTabs}}" wx:key="index"
+          data-path="{{item.pagePath}}" data-index="{{index}}"
+          bindtap="switchTab">
+      <view class="tab-icon tab-icon-{{item.icon}} {{selected === index ? 'active' : ''}}"></view>
+      <text class="tab-text {{selected === index ? 'active' : ''}}">{{item.text}}</text>
+    </view>
+  </block>
+</view>

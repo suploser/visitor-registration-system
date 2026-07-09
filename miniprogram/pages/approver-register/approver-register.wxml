@@ -1,0 +1,89 @@
+<!-- 审批人信息录入页 -->
+<view class="page-register">
+  <!-- 加载中 -->
+  <view class="loading-box" wx:if="{{loading}}">
+    <view class="loading-icon">⏳</view>
+    <text class="loading-text">验证注册链接...</text>
+  </view>
+
+  <!-- Token 无效 -->
+  <view class="error-box" wx:if="{{!loading && errorMsg}}">
+    <view class="error-icon">❌</view>
+    <text class="error-title">链接无效</text>
+    <text class="error-desc">{{errorMsg}}</text>
+    <button class="btn btn-primary" bindtap="goHome" style="margin-top:40rpx;width:300rpx">返回首页</button>
+  </view>
+
+  <!-- 验证码输入（token有效但未验证） -->
+  <view class="form-box" wx:if="{{!loading && !errorMsg && !verified && !success}}">
+    <view class="card">
+      <view class="card-title">身份验证</view>
+      <view class="role-tag">
+        {{roleLabel}}
+      </view>
+      <view class="auth-desc" style="text-align:center;margin-bottom:30rpx;">
+        请输入管理员提供的验证码
+      </view>
+
+      <view class="form-group">
+        <view class="form-label"><text class="required">*</text>验证码</view>
+        <input class="form-input code-input" type="number" placeholder="请输入6位验证码" bindinput="onCodeInput" value="{{verifyCode}}" maxlength="6" />
+      </view>
+
+      <button class="btn btn-primary" bindtap="verifyCode" loading="{{verifying}}" style="margin-top:40rpx">
+        验证
+      </button>
+
+      <view class="auth-desc" style="text-align:center;margin-top:20rpx;font-size:22rpx;">
+        验证码由管理员在后台生成，有效期为1小时
+      </view>
+    </view>
+  </view>
+
+  <!-- 录入表单（验证码通过后显示） -->
+  <view class="form-box" wx:if="{{!loading && !errorMsg && verified && !success}}">
+    <view class="card">
+      <view class="card-title">审批人信息录入</view>
+      <view class="role-tag">
+        {{roleLabel}}
+      </view>
+
+      <!-- 微信授权 -->
+      <view class="auth-section" wx:if="{{!authorized}}">
+        <text class="auth-desc">请先授权获取您的微信信息</text>
+        <button class="btn btn-primary" bindtap="doAuth" style="width:400rpx">
+          微信授权登录
+        </button>
+      </view>
+
+      <!-- 信息填写 -->
+      <view wx:if="{{authorized}}">
+        <view class="form-group">
+          <view class="form-label"><text class="required">*</text>姓名</view>
+          <input class="form-input" placeholder="请输入您的姓名" bindinput="onInput" data-field="name" value="{{form.name}}" maxlength="20" />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label"><text class="required">*</text>部门</view>
+          <picker mode="selector" range="{{departmentOptions}}" range-key="label" bindchange="onDeptChange">
+            <view class="picker {{form.department ? '' : 'placeholder'}}">
+              {{form.department || '请选择您所在的部门'}}
+            </view>
+          </picker>
+        </view>
+
+        <button class="btn btn-primary" bindtap="submitRegister" loading="{{submitting}}" style="margin-top:40rpx">
+          确认提交
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 注册成功 -->
+  <view class="success-box" wx:if="{{success}}">
+    <view class="success-icon">✅</view>
+    <view class="success-title">{{successMsg}}</view>
+    <text class="success-desc">您现在可以进入小程序查看审批事项了</text>
+    <button class="btn btn-primary" bindtap="goHome" style="margin-top:40rpx;width:300rpx">进入首页</button>
+  </view>
+</view>

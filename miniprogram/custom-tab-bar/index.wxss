@@ -1,0 +1,188 @@
+/* ---- 自定义 TabBar - 线性扁平图标 ---- */
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150rpx;
+  background: #fff;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 999;
+}
+
+.tab-bar-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: #e5e5e5;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6rpx;
+}
+
+/* 图标容器 */
+.tab-icon {
+  position: relative;
+  width: 56rpx;
+  height: 56rpx;
+}
+
+/* ================================================
+   首页 — 房子
+================================================ */
+.tab-icon-home::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 28rpx solid transparent;
+  border-right: 28rpx solid transparent;
+  border-bottom: 18rpx solid #999;
+}
+.tab-icon-home::after {
+  content: '';
+  position: absolute;
+  top: 17rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36rpx;
+  height: 28rpx;
+  border: 5rpx solid #999;
+  border-top: none;
+  border-radius: 2rpx;
+}
+.tab-icon-home.active::before {
+  border-bottom-color: #1a73e8;
+}
+.tab-icon-home.active::after {
+  border-color: #1a73e8;
+  border-top: none;
+}
+
+/* ================================================
+   我的 — 人形
+================================================ */
+.tab-icon-profile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22rpx;
+  height: 22rpx;
+  border: 5rpx solid #999;
+  border-radius: 50%;
+}
+.tab-icon-profile::after {
+  content: '';
+  position: absolute;
+  top: 27rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44rpx;
+  height: 27rpx;
+  border: 5rpx solid #999;
+  border-radius: 22rpx 22rpx 0 0;
+  border-bottom: none;
+}
+.tab-icon-profile.active::before,
+.tab-icon-profile.active::after {
+  border-color: #1a73e8;
+}
+.tab-icon-profile.active::after {
+  border-bottom: none;
+}
+
+/* ================================================
+   待审批 — 剪贴板
+================================================ */
+.tab-icon-pending::before {
+  content: '';
+  position: absolute;
+  top: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24rpx;
+  height: 12rpx;
+  border: 5rpx solid #999;
+  border-radius: 5rpx;
+}
+.tab-icon-pending::after {
+  content: '';
+  position: absolute;
+  top: 12rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38rpx;
+  height: 38rpx;
+  border: 5rpx solid #999;
+  border-radius: 6rpx;
+}
+.tab-icon-pending.active::before,
+.tab-icon-pending.active::after {
+  border-color: #1a73e8;
+}
+
+/* ================================================
+   审批记录 — 时钟
+================================================ */
+.tab-icon-history {
+  width: 50rpx;
+  height: 50rpx;
+  margin: 3rpx;
+  border: 5rpx solid #999;
+  border-radius: 50%;
+}
+.tab-icon-history::before {
+  content: '';
+  position: absolute;
+  top: 11rpx;
+  left: 50%;
+  width: 5rpx;
+  height: 14rpx;
+  background: #999;
+  border-radius: 2rpx;
+  transform: translateX(-50%);
+}
+.tab-icon-history::after {
+  content: '';
+  position: absolute;
+  top: 11rpx;
+  left: 50%;
+  width: 5rpx;
+  height: 18rpx;
+  background: #999;
+  border-radius: 2rpx;
+  transform: translateX(-50%) rotate(90deg);
+}
+.tab-icon-history.active {
+  border-color: #1a73e8;
+}
+.tab-icon-history.active::before,
+.tab-icon-history.active::after {
+  background: #1a73e8;
+}
+
+/* ======== 文字标签 ======== */
+.tab-text {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 14rpx;
+  line-height: 1;
+}
+.tab-text.active {
+  color: #1a73e8;
+}

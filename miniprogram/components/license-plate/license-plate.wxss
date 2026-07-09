@@ -1,0 +1,266 @@
+/* 车牌组件样式 */
+.plate-component {
+  padding: 10rpx 0;
+}
+
+.plate-label {
+  font-size: 24rpx;
+  color: #888;
+  margin-bottom: 12rpx;
+}
+
+/* 已添加车牌列表 */
+.plate-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.plate-item {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.plate-display {
+  height: 56rpx;
+  padding: 0 18rpx;
+  background: #1a73e8;
+  color: #fff;
+  border-radius: 8rpx;
+  border: 3rpx solid #1557b0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plate-display.new-energy {
+  background: #27ae60;
+  border-color: #1e8449;
+  padding: 0 22rpx;
+}
+
+.plate-number {
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  font-family: 'Courier New', monospace;
+}
+
+.plate-delete {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 添加按钮 */
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  border: 2rpx dashed #ccc;
+  border-radius: 12rpx;
+  gap: 8rpx;
+  background: #fafafa;
+}
+
+.add-btn:active { background: #f0f0f0; }
+
+.add-icon {
+  font-size: 36rpx;
+  color: #1a73e8;
+  font-weight: 300;
+}
+
+.add-text {
+  font-size: 26rpx;
+  color: #1a73e8;
+}
+
+/* ===== 键盘弹窗 ===== */
+.keyboard-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+}
+
+.keyboard-panel {
+  width: 100%;
+  max-height: 85vh;
+  background: #f0f2f5;
+  border-radius: 30rpx 30rpx 0 0;
+  overflow-y: auto;
+}
+
+.kb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 30rpx 16rpx;
+  background: #fff;
+  border-radius: 30rpx 30rpx 0 0;
+}
+
+.kb-back, .kb-close {
+  font-size: 26rpx;
+  color: #1a73e8;
+}
+
+.kb-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 步骤指示器 */
+.kb-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  gap: 0;
+  background: #fff;
+}
+
+.kb-step {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  font-weight: 600;
+  background: #e8e8e8;
+  color: #999;
+  transition: all 0.2s;
+}
+
+.kb-step.done { background: #d4edda; color: #27ae60; }
+.kb-step.current { background: #1a73e8; color: #fff; transform: scale(1.15); }
+
+.kb-step-line {
+  width: 60rpx;
+  height: 4rpx;
+  background: #e8e8e8;
+}
+
+.kb-step-line.done { background: #27ae60; }
+
+/* 预览区 */
+.kb-preview {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx 0;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.preview-plate {
+  height: 70rpx;
+  padding: 0 32rpx;
+  background: #1a73e8;
+  color: #fff;
+  border-radius: 10rpx;
+  border: 3rpx solid #1557b0;
+  display: flex;
+  align-items: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: 4rpx;
+  font-family: 'Courier New', monospace;
+  min-width: 200rpx;
+  justify-content: center;
+}
+
+.preview-plate.new-energy {
+  background: #27ae60;
+  border-color: #1e8449;
+}
+
+/* 按键网格 */
+.kb-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx 16rpx;
+  gap: 10rpx;
+  background: #e8ecf0;
+}
+
+.kb-key {
+  background: #fff;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+  box-shadow: 0 2rpx 0 #c8ccd0;
+}
+
+.kb-key:active {
+  background: #d0d8e0;
+  transform: scale(0.94);
+  box-shadow: 0 1rpx 0 #c8ccd0;
+}
+
+.kb-key.selected {
+  background: #1a73e8;
+  color: #fff;
+  box-shadow: 0 2rpx 0 #1557b0;
+}
+
+.province-key {
+  width: calc((100% - 50rpx) / 6);
+  height: 80rpx;
+  flex-direction: column;
+}
+
+.province-key .key-main { font-size: 26rpx; font-weight: 600; }
+.province-key .key-sub { font-size: 16rpx; color: #aaa; margin-top: -2rpx; }
+.province-key.selected .key-sub { color: rgba(255,255,255,0.7); }
+
+/* 城市字母键 */
+.kb-grid:not(.number-grid) .kb-key:not(.province-key) {
+  width: calc((100% - 70rpx) / 8);
+  height: 72rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 号码键盘 */
+.number-grid .num-key {
+  width: calc((100% - 90rpx) / 10);
+  height: 76rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.number-grid .action-key {
+  width: calc((100% - 90rpx) / 10);
+  height: 76rpx;
+}
+
+.back-key { background: #fff3f3; color: #e74c3c; font-size: 32rpx; }
+.confirm-key { background: #1a73e8; color: #fff; font-size: 32rpx; font-weight: 700; box-shadow: 0 2rpx 0 #1557b0; }
+
+.key-main { pointer-events: none; }
+
+/* 提示 */
+.kb-hint {
+  text-align: center;
+  padding: 16rpx;
+  font-size: 24rpx;
+  color: #888;
+}

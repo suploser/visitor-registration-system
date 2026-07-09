@@ -1,0 +1,95 @@
+<!-- 多车辆车牌输入组件 -->
+<view class="plate-component">
+  <view class="plate-label">车辆信息（选填）</view>
+
+  <!-- 已添加的车牌列表 -->
+  <view class="plate-list" wx:if="{{plates.length > 0}}">
+    <view class="plate-item" wx:for="{{plates}}" wx:key="index">
+      <view class="plate-display {{item.isNewEnergy ? 'new-energy' : ''}}">
+        <text class="plate-number">{{item.value}}</text>
+      </view>
+      <view class="plate-delete" bindtap="deletePlate" data-index="{{index}}">✕</view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-btn" bindtap="openKeyboard" wx:if="{{plates.length < 5}}">
+    <text class="add-icon">＋</text>
+    <text class="add-text">添加车辆</text>
+  </view>
+
+  <!-- 自定义键盘弹窗 -->
+  <view class="keyboard-overlay" wx:if="{{kbVisible}}" catchtouchmove="noop">
+    <view class="keyboard-panel">
+      <!-- 头部 -->
+      <view class="kb-header">
+        <text class="kb-back" bindtap="kbBack">{{kbStep > 0 ? '← 上一步' : '取消'}}</text>
+        <text class="kb-title">
+          {{kbStep === 0 ? '选择省份' : (kbStep === 1 ? '选择城市代码' : '输入车牌号码')}}
+        </text>
+        <text class="kb-close" bindtap="kbClose">关闭</text>
+      </view>
+
+      <!-- 步骤指示器 -->
+      <view class="kb-steps">
+        <view class="kb-step {{kbStep >= 0 ? 'done' : ''}} {{kbStep === 0 ? 'current' : ''}}">省</view>
+        <view class="kb-step-line {{kbStep >= 1 ? 'done' : ''}}"></view>
+        <view class="kb-step {{kbStep >= 1 ? 'done' : ''}} {{kbStep === 1 ? 'current' : ''}}">市</view>
+        <view class="kb-step-line {{kbStep >= 2 ? 'done' : ''}}"></view>
+        <view class="kb-step {{kbStep >= 2 ? 'done' : ''}} {{kbStep === 2 ? 'current' : ''}}">号</view>
+      </view>
+
+      <!-- 预览 -->
+      <view class="kb-preview">
+        <view class="preview-plate {{kbIsNewEnergy ? 'new-energy' : ''}}">
+          <text>{{kbProvince}}</text>
+          <text wx:if="{{kbCity}}">{{kbCity}}</text>
+          <text wx:if="{{kbNumber}}">{{kbNumber}}</text>
+        </view>
+      </view>
+
+      <!-- Step 0: 省份选择 -->
+      <view class="kb-grid" wx:if="{{kbStep === 0}}">
+        <view class="kb-key province-key {{kbProvince === item ? 'selected' : ''}}"
+              wx:for="{{provinces}}" wx:key="name"
+              bindtap="selectProvince" data-val="{{item.name}}">
+          <text class="key-main">{{item.name}}</text>
+          <text class="key-sub">{{item.full}}</text>
+        </view>
+      </view>
+
+      <!-- Step 1: 城市字母选择 -->
+      <view class="kb-grid" wx:if="{{kbStep === 1}}">
+        <view class="kb-key {{kbCity === item ? 'selected' : ''}}"
+              wx:for="{{cityLetters}}" wx:key="*this"
+              bindtap="selectCity" data-val="{{item}}">
+          <text class="key-main">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- Step 2: 号码输入 -->
+      <view class="kb-grid number-grid" wx:if="{{kbStep === 2}}">
+        <block wx:for="{{numKeys}}" wx:key="*this">
+          <view class="kb-key num-key" wx:if="{{item !== '⌫' && item !== '✓'}}"
+                bindtap="inputChar" data-val="{{item}}">
+            <text class="key-main">{{item}}</text>
+          </view>
+          <view class="kb-key action-key back-key" wx:if="{{item === '⌫'}}"
+                bindtap="kbBackspace">
+            <text class="key-main">⌫</text>
+          </view>
+          <view class="kb-key action-key confirm-key" wx:if="{{item === '✓'}}"
+                bindtap="kbConfirm">
+            <text class="key-main">✓</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 新能源提示 -->
+      <view class="kb-hint" wx:if="{{kbStep === 2}}">
+        <text wx:if="{{kbIsNewEnergy}}">🔋 新能源车牌（{{kbMaxLen}}位）</text>
+        <text wx:else>⛽ 普通车牌（{{kbMaxLen}}位）</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,26 @@
+<!-- 访客告知书页面 -->
+<view class="page-notice">
+  <!-- 告知书内容 -->
+  <view class="notice-content">
+    <rich-text nodes="{{noticeContent}}" class="notice-richtext"></rich-text>
+  </view>
+
+  <!-- 勾选区域 -->
+  <view class="agree-section">
+    <view class="agree-checkbox" bindtap="toggleAgree">
+      <view class="checkbox-icon {{agreed ? 'checked' : ''}}">
+        <text wx:if="{{agreed}}">✓</text>
+      </view>
+      <text class="agree-text">我已阅读并知悉以上全部条款</text>
+    </view>
+  </view>
+
+  <!-- 下一步按钮 -->
+  <view class="footer-section">
+    <button class="btn btn-primary {{countdown > 0 ? 'btn-disabled' : ''}}"
+            bindtap="goNext"
+            disabled="{{countdown > 0}}">
+      下一步<block wx:if="{{countdown > 0}}">（{{countdown}}s）</block>
+    </button>
+  </view>
+</view>

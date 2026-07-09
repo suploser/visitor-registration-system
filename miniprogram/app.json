@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/notice/notice",
+    "pages/register/register",
+    "pages/result/result",
+    "pages/approval-list/approval-list",
+    "pages/approval-detail/approval-detail",
+    "pages/approval-history/approval-history",
+    "pages/approver-register/approver-register"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a73e8",
+    "navigationBarTitleText": "访客登记系统",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#999999",
+    "selectedColor": "#1a73e8",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/result/result",
+        "text": "我的",
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine-active.png"
+      },
+      {
+        "pagePath": "pages/approval-list/approval-list",
+        "text": "待审批",
+        "iconPath": "images/register.png",
+        "selectedIconPath": "images/register-active.png"
+      },
+      {
+        "pagePath": "pages/approval-history/approval-history",
+        "text": "审批记录",
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "license-plate": "/components/license-plate/license-plate",
+    "companion-form": "/components/companion-form/companion-form"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,66 @@
+/* 访客告知书样式 */
+.page-notice {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.notice-content {
+  flex: 1;
+  padding: 30rpx;
+  overflow-y: auto;
+}
+
+.notice-richtext {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.8;
+}
+
+.agree-section {
+  padding: 30rpx;
+  border-top: 1rpx solid #eee;
+  background: #fafafa;
+}
+
+.agree-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-icon {
+  width: 44rpx;
+  height: 44rpx;
+  border: 3rpx solid #ccc;
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.checkbox-icon.checked {
+  background: #1a73e8;
+  border-color: #1a73e8;
+}
+
+.agree-text {
+  font-size: 28rpx;
+  color: #e74c3c;
+}
+
+.footer-section {
+  padding: 20rpx 30rpx 40rpx;
+  background: #fff;
+}
+
+/* 倒计时期间按钮置灰 */
+.footer-section .btn-disabled {
+  background: #c0c0c0;
+  color: #fff;
+  opacity: 1;
+}

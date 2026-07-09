@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - 访客登记系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+      background: #f0f2f5;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 220px;
+      background: #001529;
+      color: #fff;
+      padding: 20px 0;
+    }
+    .sidebar-logo {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 16px;
+    }
+    .menu-item {
+      padding: 14px 28px;
+      cursor: pointer;
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .menu-item:hover, .menu-item.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      border-left-color: #1a73e8;
+    }
+    .main-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .header h1 { font-size: 22px; color: #333; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 14px;
+      color: #666;
+    }
+    .btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-primary:hover { background: #1557b0; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .btn-outline { background: #fff; color: #1a73e8; border: 1px solid #1a73e8; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    th {
+      background: #fafafa;
+      font-weight: 500;
+      color: #555;
+    }
+    tr:hover td { background: #fafafa; }
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .tag-pending { background: #fff3cd; color: #856404; }
+    .tag-approved { background: #d4edda; color: #155724; }
+    .tag-rejected { background: #f8d7da; color: #721c24; }
+    .tag-level1 { background: #cce5ff; color: #004085; }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .pagination button {
+      padding: 6px 14px;
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .pagination button.active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      width: 520px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .hidden { display: none !important; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #999;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- 侧边栏 -->
+  <div class="sidebar">
+    <div class="sidebar-logo">访客管理系统</div>
+    <div class="menu-item active" data-tab="visitors">访客记录</div>
+    <div class="menu-item" data-tab="approvals">审批记录</div>
+    <div class="menu-item" data-tab="approvers">审批人管理</div>
+    <div class="menu-item" data-tab="departments">部门管理</div>
+    <div class="menu-item" data-tab="config">系统配置</div>
+    <div class="menu-item" data-tab="password">修改密码</div>
+  </div>
+
+  <!-- 主内容区 -->
+  <div class="main-content">
+    <div class="header">
+      <h1 id="pageTitle">访客记录</h1>
+      <div class="header-right">
+        <span id="usernameDisplay"></span>
+        <button class="btn btn-outline" onclick="logout()">退出</button>
+      </div>
+    </div>
+
+    <!-- 访客记录 Tab -->
+    <div class="tab-content active" id="tab-visitors">
+      <div class="card">
+        <div class="card-title">
+          访客登记记录
+          <button class="btn btn-success" style="float:right" onclick="exportVisitors()">导出Excel</button>
+        </div>
+        <div style="margin-bottom:12px">
+          <select id="visitorStatusFilter" onchange="loadVisitors(1)">
+            <option value="">全部状态</option>
+            <option value="pending">待审批</option>
+            <option value="level1_approved">一级已通过</option>
+            <option value="approved">已通过</option>
+            <option value="rejected">已拒绝</option>
+          </select>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>姓名</th><th>手机号</th><th>身份证号</th>
+              <th>接待人</th><th>接待部门</th><th>访问时间</th><th>状态</th><th>登记时间</th>
+            </tr>
+          </thead>
+          <tbody id="visitorsTable"></tbody>
+        </table>
+        <div class="pagination" id="visitorsPagination"></div>
+      </div>
+    </div>
+
+    <!-- 审批记录 Tab -->
+    <div class="tab-content" id="tab-approvals">
+      <div class="card">
+        <div class="card-title">
+          审批记录
+          <button class="btn btn-success" style="float:right" onclick="exportApprovals()">导出Excel</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>访客</th><th>接待部门</th><th>审批人</th><th>角色</th><th>结果</th><th>意见</th><th>时间</th></tr>
+          </thead>
+          <tbody id="approvalsTable"></tbody>
+        </table>
+        <div class="pagination" id="approvalsPagination"></div>
+      </div>
+    </div>
+
+    <!-- 审批人管理 Tab -->
+    <div class="tab-content" id="tab-approvers">
+      <div class="card">
+        <div class="card-title">
+          审批人列表
+          <button class="btn btn-primary" style="float:right" onclick="showGenerateLinkModal()">生成录入链接</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>姓名</th><th>部门</th><th>角色</th><th>已录入</th><th>创建时间</th><th>操作</th></tr>
+          </thead>
+          <tbody id="approversTable"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">有效验证码</div>
+        <p style="font-size:12px;color:#999;margin-bottom:12px;">以下验证码可用于审批人录入（1小时有效）。可手动复制发给合法审批人。</p>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>验证码</th><th>角色</th><th>过期时间</th><th>状态</th><th>生成时间</th></tr>
+          </thead>
+          <tbody id="verificationCodesTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 部门管理 Tab -->
+    <div class="tab-content" id="tab-departments">
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <!-- 接待人部门 -->
+        <div class="card" style="flex:1; min-width:380px;">
+          <div class="card-title">接待人 / 一级审批人部门</div>
+          <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <input type="text" id="newDeptName" placeholder="输入新部门名称" style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:6px; font-size:13px;" onkeydown="if(event.key==='Enter')addDept()">
+            <button class="btn btn-primary" onclick="addDept()">新增</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>部门名称</th><th>创建时间</th><th>操作</th></tr></thead>
+            <tbody id="deptTable"></tbody>
+          </table>
+        </div>
+        <!-- 二级审批人部门 -->
+        <div class="card" style="flex:1; min-width:380px;">
+          <div class="card-title">二级审批人部门</div>
+          <div style="display:flex; gap:8px; margin-bottom:16px;" id="l2AddRow">
+            <input type="text" id="newL2DeptName" placeholder="输入新部门名称" style="flex:1; padding:6px 10px; border:1px solid #ddd; border-radius:6px; font-size:13px;" onkeydown="if(event.key==='Enter')addL2Dept()">
+            <button class="btn btn-primary" onclick="addL2Dept()">新增</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>部门名称</th><th>创建时间</th><th>操作</th></tr></thead>
+            <tbody id="l2DeptTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系统配置 Tab -->
+    <div class="tab-content" id="tab-config">
+      <div class="card">
+        <div class="card-title">系统配置</div>
+        <div class="form-group">
+          <label>欢迎弹窗消息</label>
+          <textarea id="cfgWelcome" rows="3" placeholder="首页欢迎弹窗内容"></textarea>
+        </div>
+        <div class="form-group">
+          <label>访客告知书 (HTML)</label>
+          <textarea id="cfgNotice" rows="8" placeholder="访客告知书HTML内容"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Excel导出密码</label>
+          <input type="text" id="cfgExcelPwd" placeholder="导出文件的打开密码">
+        </div>
+        <div class="form-group">
+          <label>首页背景图URL（JSON数组格式）</label>
+          <input type="text" id="cfgBgImages" placeholder='["https://example.com/bg.jpg"]'>
+        </div>
+        <div class="form-group">
+          <label>滚动展示图片URL（JSON数组格式）</label>
+          <input type="text" id="cfgScrollImages" placeholder='["https://example.com/img1.jpg","https://example.com/img2.jpg"]'>
+        </div>
+        <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+      </div>
+    </div>
+
+    <!-- 修改密码 Tab -->
+    <div class="tab-content" id="tab-password">
+      <div class="card">
+        <div class="card-title">修改管理员密码</div>
+        <div id="passwordExpiredBanner" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:12px 16px; margin-bottom:16px; color:#856404; font-size:14px;">
+          ⚠️ 您的密码已超过7天未修改，出于安全考虑，请立即修改密码。修改完成前其他功能暂不可用。
+        </div>
+        <div class="form-group">
+          <label>旧密码</label>
+          <input type="password" id="oldPassword" placeholder="请输入旧密码">
+        </div>
+        <div class="form-group">
+          <label>新密码</label>
+          <input type="password" id="newPassword" placeholder="至少8位，含大小写字母+数字+特殊字符中的3种">
+        </div>
+        <button class="btn btn-primary" onclick="changePassword()">修改密码</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 生成链接弹窗 -->
+<div class="modal-overlay hidden" id="generateLinkModal">
+  <div class="modal">
+    <h3>生成审批人录入链接</h3>
+    <p style="font-size:13px;color:#999;margin-bottom:16px;">同一链接可被多个审批人重复使用（1小时有效）</p>
+    <div class="form-group">
+      <label>角色</label>
+      <select id="approverRole">
+        <option value="level1">一级审批人</option>
+        <option value="level2">二级审批人</option>
+      </select>
+    </div>
+    <div id="generatedLink" style="margin-top:12px; background:#f5f5f5; padding:10px; border-radius:6px; display:none;">
+      <p style="font-size:12px; color:#666;">录入链接已生成（1小时有效，可复用）</p>
+      <div style="background:#fffbe6; border:2px solid #f0c040; border-radius:8px; padding:12px; margin:10px 0; text-align:center;">
+        <p style="font-size:11px; color:#b8860b; margin:0 0 6px;">验证码（1小时有效，请手动发给审批人）</p>
+        <p id="verificationCode" style="font-size:28px; font-weight:700; color:#e67e22; letter-spacing:6px; font-family:'Courier New',monospace; margin:0;"></p>
+      </div>
+      <p style="font-size:11px; color:#999; margin-top:6px;">小程序页面路径（用于生成小程序码）：</p>
+      <p id="linkText" style="word-break:break-all; font-size:12px; color:#1a73e8; font-family:monospace;"></p>
+      <p style="font-size:11px; color:#e67e22; margin-top:6px;">使用方法：复制上方路径 → 微信公众平台 → 工具 → 生成小程序码 → 填入路径 → 审批人扫码</p>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="hideGenerateLinkModal()">取消</button>
+      <button class="btn btn-primary" onclick="generateLink()">生成链接</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+const token = localStorage.getItem('admin_token');
+const username = localStorage.getItem('admin_username');
+
+// 检查登录
+if (!token) { window.location.href = '/admin/login.html'; }
+
+document.getElementById('usernameDisplay').textContent = username || '管理员';
+
+function api(method, url, data = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+  };
+  if (data) opts.body = JSON.stringify(data);
+  return fetch(API + url, opts).then(r => {
+    if (r.status === 401) { localStorage.clear(); window.location.href = '/admin/login.html'; }
+    return r.json().then(body => {
+      // 密码过期：强制跳转到修改密码页
+      if (body.password_expired) {
+        forcePasswordChange();
+        return { code: 403, message: body.message, password_expired: true };
+      }
+      return body;
+    });
+  });
+}
+
+// Tab 切换
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    this.classList.add('active');
+    const tabName = this.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    document.getElementById('pageTitle').textContent = this.textContent.trim();
+
+    if (tabName === 'visitors') loadVisitors();
+    else if (tabName === 'approvals') loadApprovals();
+    else if (tabName === 'approvers') loadApprovers();
+    else if (tabName === 'departments') loadDepartments();
+    else if (tabName === 'config') loadConfig();
+  });
+});
+
+// 访客记录加载
+async function loadVisitors(page = 1) {
+  const status = document.getElementById('visitorStatusFilter').value;
+  const res = await api('GET', `/api/admin/visitors?page=${page}&per_page=20&status=${status}`);
+  if (res.code === 0) {
+    const d = res.data;
+    let html = d.items.map(v => `
+      <tr>
+        <td>${v.id}</td><td>${v.name}</td><td>${v.phone||''}</td><td>${v.id_number||''}</td>
+        <td>${v.host_name}</td><td>${v.host_department}</td>
+        <td>${v.visit_start}~${v.visit_end}</td>
+        <td><span class="tag tag-${v.status === 'approved' ? 'approved' : v.status === 'rejected' ? 'rejected' : 'pending'}">${v.status === 'pending' ? '待审批' : v.status === 'level1_approved' ? '一级通过' : v.status === 'approved' ? '通过' : '拒绝'}</span></td>
+        <td>${v.created_at}</td>
+      </tr>`).join('');
+    document.getElementById('visitorsTable').innerHTML = html || '<tr><td colspan="9" style="text-align:center">暂无数据</td></tr>';
+
+    let pagination = '';
+    for (let i = 1; i <= d.pages; i++) {
+      pagination += `<button class="${i === d.page ? 'active' : ''}" onclick="loadVisitors(${i})">${i}</button>`;
+    }
+    document.getElementById('visitorsPagination').innerHTML = pagination;
+  }
+}
+
+// 审批记录加载
+async function loadApprovals(page = 1) {
+  const res = await api('GET', `/api/admin/approvals?page=${page}&per_page=20`);
+  if (res.code === 0) {
+    const d = res.data;
+    let html = d.items.map(r => `
+      <tr>
+        <td>${r.id}</td><td>${r.visitor_name||''}</td><td>${r.host_department||''}</td>
+        <td>${r.approver_name}</td><td>${r.approver_role==='level1'?'一级':'二级'}</td>
+        <td><span class="tag tag-${r.result==='approved'?'approved':'rejected'}">${r.result==='approved'?'通过':'拒绝'}</span></td>
+        <td>${r.comment||''}</td><td>${r.approved_at}</td>
+      </tr>`).join('');
+    document.getElementById('approvalsTable').innerHTML = html || '<tr><td colspan="8" style="text-align:center">暂无数据</td></tr>';
+
+    let pagination = '';
+    for (let i = 1; i <= d.pages; i++) {
+      pagination += `<button class="${i === d.page ? 'active' : ''}" onclick="loadApprovals(${i})">${i}</button>`;
+    }
+    document.getElementById('approvalsPagination').innerHTML = pagination;
+  }
+}
+
+// 审批人管理
+async function loadApprovers() {
+  const res = await api('GET', '/api/admin/approvers');
+  if (res.code === 0) {
+    let html = res.data.map(a => `
+      <tr>
+        <td>${a.id}</td><td>${a.name}</td><td>${a.department}</td>
+        <td><span class="tag tag-level1">${a.role==='level1'?'一级':'二级'}</span></td>
+        <td>${a.is_registered?'是':'否'}</td><td>${a.created_at}</td>
+        <td><button class="btn btn-danger" onclick="deleteApprover(${a.id})">删除</button></td>
+      </tr>`).join('');
+    document.getElementById('approversTable').innerHTML = html || '<tr><td colspan="7" style="text-align:center">暂无数据</td></tr>';
+  }
+  loadVerificationCodes();
+}
+
+async function loadVerificationCodes() {
+  const res = await api('GET', '/api/admin/verification-codes');
+  if (res.code === 0) {
+    let html = res.data.map(c => `
+      <tr>
+        <td>${c.id}</td>
+        <td style="font-size:18px;font-weight:700;color:#e67e22;letter-spacing:4px;font-family:'Courier New',monospace;">${c.code}</td>
+        <td><span class="tag tag-level1">${c.role_label}</span></td>
+        <td>${c.expires_at}</td>
+        <td>${c.is_valid ? '<span class="tag tag-approved">有效</span>' : '<span class="tag tag-rejected">已过期</span>'}</td>
+        <td>${c.created_at}</td>
+      </tr>`).join('');
+    document.getElementById('verificationCodesTable').innerHTML = html || '<tr><td colspan="6" style="text-align:center">暂无有效验证码</td></tr>';
+  }
+}
+
+function showGenerateLinkModal() {
+  document.getElementById('generateLinkModal').classList.remove('hidden');
+  document.getElementById('generatedLink').style.display = 'none';
+}
+function hideGenerateLinkModal() {
+  document.getElementById('generateLinkModal').classList.add('hidden');
+}
+
+async function generateLink() {
+  const role = document.getElementById('approverRole').value;
+  const res = await api('POST', '/api/approver/generate-link', { role });
+  if (res.code === 0) {
+    document.getElementById('linkText').textContent = res.data.page_path;
+    document.getElementById('verificationCode').textContent = res.data.verification_code;
+    document.getElementById('generatedLink').style.display = 'block';
+    loadApprovers();
+  } else {
+    alert(res.message || '生成失败');
+  }
+}
+
+async function deleteApprover(id) {
+  if (!confirm('确定删除该审批人吗？')) return;
+  const res = await api('DELETE', `/api/admin/approvers/${id}`);
+  if (res.code === 0) { loadApprovers(); } else { alert(res.message); }
+}
+
+// 加载配置
+async function loadConfig() {
+  const res = await api('GET', '/api/admin/config');
+  if (res.code === 0) {
+    document.getElementById('cfgWelcome').value = res.data.welcome_message || '';
+    document.getElementById('cfgNotice').value = res.data.visitor_notice || '';
+    document.getElementById('cfgExcelPwd').value = res.data.excel_password || '';
+    document.getElementById('cfgBgImages').value = res.data.home_bg_images || '[]';
+    document.getElementById('cfgScrollImages').value = res.data.company_scroll_images || '[]';
+  }
+}
+
+async function saveConfig() {
+  const data = {
+    welcome_message: document.getElementById('cfgWelcome').value,
+    visitor_notice: document.getElementById('cfgNotice').value,
+    excel_password: document.getElementById('cfgExcelPwd').value,
+    home_bg_images: document.getElementById('cfgBgImages').value,
+    company_scroll_images: document.getElementById('cfgScrollImages').value,
+  };
+  const res = await api('PUT', '/api/admin/config', data);
+  if (res.code === 0) { alert('保存成功'); } else { alert(res.message); }
+}
+
+// 导出
+async function exportVisitors() {
+  const resp = await fetch(API + '/api/admin/visitors/export', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (resp.ok) {
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '访客记录.xlsx'; a.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function exportApprovals() {
+  const resp = await fetch(API + '/api/admin/approvals/export', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (resp.ok) {
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '审批记录.xlsx'; a.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+// ===== 部门管理 =====
+async function loadDepartments() {
+  const [res1, res2] = await Promise.all([
+    api('GET', '/api/visitor/departments'),
+    api('GET', '/api/approver/departments?role=level2'),
+  ]);
+  if (res1.code === 0) {
+    document.getElementById('deptTable').innerHTML = res1.data.map(d => `
+      <tr><td>${d.id}</td><td>${d.name}</td><td>${d.created_at||'-'}</td>
+        <td><button class="btn btn-danger" onclick="deleteDept(${d.id})">删除</button></td></tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center">暂无数据</td></tr>';
+  }
+  if (res2.code === 0) {
+    const hasL2 = res2.data.length > 0;
+    document.getElementById('l2DeptTable').innerHTML = res2.data.map(d => `
+      <tr><td>${d.id}</td><td>${d.name}</td><td>${d.created_at||'-'}</td>
+        <td><button class="btn btn-danger" onclick="deleteL2Dept(${d.id})">删除</button></td></tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center">暂无数据</td></tr>';
+    document.getElementById('l2AddRow').style.display = hasL2 ? 'none' : 'flex';
+  }
+}
+
+async function addDept() {
+  const input = document.getElementById('newDeptName');
+  const name = input.value.trim();
+  if (!name) { alert('请输入部门名称'); return; }
+  const res = await api('POST', '/api/admin/departments', { name });
+  if (res.code === 0) { input.value = ''; loadDepartments(); } else { alert(res.message); }
+}
+
+async function deleteDept(id) {
+  if (!confirm('确定删除该部门吗？')) return;
+  const res = await api('DELETE', `/api/admin/departments/${id}`);
+  if (res.code === 0) { loadDepartments(); } else { alert(res.message); }
+}
+
+async function addL2Dept() {
+  const input = document.getElementById('newL2DeptName');
+  const name = input.value.trim();
+  if (!name) { alert('请输入部门名称'); return; }
+  const res = await api('POST', '/api/admin/level2-departments', { name });
+  if (res.code === 0) { input.value = ''; loadDepartments(); } else { alert(res.message); }
+}
+
+async function deleteL2Dept(id) {
+  if (!confirm('确定删除该部门吗？')) return;
+  const res = await api('DELETE', `/api/admin/level2-departments/${id}`);
+  if (res.code === 0) { loadDepartments(); } else { alert(res.message); }
+}
+
+// 修改密码
+async function changePassword() {
+  const oldPwd = document.getElementById('oldPassword').value;
+  const newPwd = document.getElementById('newPassword').value;
+  if (!oldPwd || !newPwd) { alert('请填写旧密码和新密码'); return; }
+  const resp = await fetch(API + '/api/admin/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ old_password: oldPwd, new_password: newPwd }),
+  });
+  const res = await resp.json();
+  if (res.code === 0) {
+    // 更新本地token（密码修改后会签发新token）
+    if (res.data && res.data.token) {
+      localStorage.setItem('admin_token', res.data.token);
+      // token变量在当前页面是const，需要重新从storage读取
+      location.reload();
+      return;
+    }
+    alert('密码修改成功，请重新登录');
+    localStorage.clear();
+    window.location.href = '/admin/login.html';
+  } else {
+    alert(res.message);
+  }
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/admin/login.html';
+}
+
+// 强制修改密码（密码过期时调用）
+function forcePasswordChange() {
+  document.getElementById('passwordExpiredBanner').style.display = 'block';
+  // 切换到修改密码 tab
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+  const pwdMenu = document.querySelector('.menu-item[data-tab="password"]');
+  if (pwdMenu) pwdMenu.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-password').classList.add('active');
+  document.getElementById('pageTitle').textContent = '修改密码（必须）';
+}
+
+// 页面加载时检查是否需要强制修改密码
+(function checkForcePasswordChange() {
+  const forceFlag = localStorage.getItem('force_password_change');
+  if (forceFlag === '1') {
+    forcePasswordChange();
+    localStorage.removeItem('force_password_change');
+  }
+})();
+
+// 初始加载
+loadVisitors();
+</script>
+</body>
+</html>

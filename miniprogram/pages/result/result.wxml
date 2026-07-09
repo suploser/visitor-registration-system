@@ -1,0 +1,90 @@
+<!-- 审批结果/凭证展示页 -->
+<view class="page-result">
+  <!-- 已登录的访客 -->
+  <block wx:if="{{role === 'visitor'}}">
+    <!-- 无记录 -->
+    <view class="empty-state" wx:if="{{!hasRecord}}">
+      <view class="empty-icon">📋</view>
+      <text>暂无登记记录</text>
+      <button class="btn btn-primary" style="margin-top: 40rpx; width: 300rpx;" bindtap="goToRegister">
+        去登记
+      </button>
+    </view>
+
+    <!-- 审批中 -->
+    <view class="status-card card" wx:if="{{status === 'pending' || status === 'level1_approved'}}">
+      <view class="status-icon pending">⏳</view>
+      <view class="status-title">审批中</view>
+      <view class="status-desc">您的访客登记正在审批中，请耐心等待...</view>
+      <view class="status-info">
+        <text>接待人：{{visitor.host_name}}</text>
+        <text>接待部门：{{visitor.host_department}}</text>
+        <text>提交时间：{{visitor.created_at}}</text>
+      </view>
+    </view>
+
+    <!-- 审批通过 -->
+    <view class="status-card card" wx:if="{{status === 'approved'}}">
+      <view class="credential-badge">✅</view>
+      <view class="status-title success">审批通过</view>
+      <view class="credential-box">
+        <view class="credential-header">通行凭证</view>
+        <view class="credential-body">
+          <view class="credential-row">
+            <text class="credential-label">访客姓名</text>
+            <text class="credential-value">{{credential.visitor_name}}</text>
+          </view>
+          <view class="credential-row">
+            <text class="credential-label">来访人数</text>
+            <text class="credential-value">{{credential.visitor_count}}人</text>
+          </view>
+          <view class="credential-row">
+            <text class="credential-label">接待人</text>
+            <text class="credential-value">{{credential.host_name}}</text>
+          </view>
+          <view class="credential-row">
+            <text class="credential-label">接待部门</text>
+            <text class="credential-value">{{credential.host_department}}</text>
+          </view>
+          <view class="credential-row">
+            <text class="credential-label">访问地点</text>
+            <text class="credential-value">{{credential.visit_location}}</text>
+          </view>
+          <view class="credential-row">
+            <text class="credential-label">访问时间</text>
+            <text class="credential-value">{{credential.visit_start}} 至 {{credential.visit_end}}</text>
+          </view>
+          <view class="credential-row" wx:if="{{credential.license_plates && credential.license_plates.length > 0}}">
+            <text class="credential-label">车牌号</text>
+            <text class="credential-value">{{credential.license_plates}}</text>
+          </view>
+        </view>
+        <view class="credential-footer">
+          <text class="expire-tip">凭证有效期至：{{credential.expires_at}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 审批拒绝 -->
+    <view class="status-card card" wx:if="{{status === 'rejected'}}">
+      <view class="status-icon rejected">❌</view>
+      <view class="status-title danger">审批未通过</view>
+      <view class="status-desc">{{visitor.reject_reason || '请核对信息后重新提交'}}</view>
+      <button class="btn btn-primary" style="margin-top: 30rpx; width: 300rpx;" bindtap="goToRegister">
+        修改后重新提交
+      </button>
+    </view>
+  </block>
+
+  <!-- 审批人进入此页面时的提示 -->
+  <block wx:if="{{role !== 'visitor'}}">
+    <view class="empty-state">
+      <view class="empty-icon">🔐</view>
+      <text>您是审批人</text>
+      <text class="sub-text">请查看审批列表处理待审批事项</text>
+      <button class="btn btn-primary" style="margin-top: 40rpx; width: 300rpx;" bindtap="goToApprovalList">
+        查看待审批
+      </button>
+    </view>
+  </block>
+</view>

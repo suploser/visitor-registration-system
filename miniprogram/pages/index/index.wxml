@@ -1,0 +1,83 @@
+<!-- 首页 -->
+<view class="page-index">
+  <!-- 自定义背景图区域（带CSS渐变回退） -->
+  <view class="hero-section">
+    <image class="hero-bg-image"
+           src="{{bgImage}}"
+           mode="aspectFill"
+           binderror="onBgImageError"
+           wx:if="{{bgImage && !bgImageError}}" />
+    <view class="hero-overlay {{bgImage && !bgImageError ? '' : 'no-image'}}">
+      <view class="hero-title">访客登记系统</view>
+      <view class="hero-subtitle">欢迎您的到来</view>
+    </view>
+  </view>
+
+  <!-- 滚动图片展示区（始终显示，有默认占位图） -->
+  <view class="gallery-section">
+    <view class="section-title">公司风采</view>
+    <swiper class="gallery-swiper"
+            autoplay="{{true}}"
+            circular="{{true}}"
+            interval="{{3000}}"
+            duration="{{500}}"
+            display-multiple-items="{{2}}">
+      <block wx:if="{{displayScrollImages.length > 0}}">
+        <swiper-item wx:for="{{displayScrollImages}}" wx:key="index">
+          <view class="gallery-item-wrap">
+            <view class="gallery-item">
+              <image src="{{item}}" mode="aspectFill" class="gallery-image" binderror="onScrollImageError" data-index="{{index}}" />
+              <view class="gallery-label" wx:if="{{item.label}}">{{item.label}}</view>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+      <!-- 无图片时显示默认占位 -->
+      <block wx:if="{{displayScrollImages.length === 0}}">
+        <swiper-item><view class="gallery-item-wrap"><view class="gallery-item gallery-placeholder">
+          <view class="placeholder-content"><text class="placeholder-icon">🏢</text><text class="placeholder-text">公司大楼</text></view>
+        </view></view></swiper-item>
+        <swiper-item><view class="gallery-item-wrap"><view class="gallery-item gallery-placeholder">
+          <view class="placeholder-content" style="background: #2980b9;"><text class="placeholder-icon">💼</text><text class="placeholder-text">办公环境</text></view>
+        </view></view></swiper-item>
+        <swiper-item><view class="gallery-item-wrap"><view class="gallery-item gallery-placeholder">
+          <view class="placeholder-content" style="background: #27ae60;"><text class="placeholder-icon">🤝</text><text class="placeholder-text">会议中心</text></view>
+        </view></view></swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="action-section">
+    <view class="section-title">快捷操作</view>
+    <view class="action-grid">
+      <view class="action-item" wx:if="{{!isApprover}}" bindtap="goToRegister">
+        <view class="action-icon icon-register">📝</view>
+        <view class="action-label">访客登记</view>
+      </view>
+      <view class="action-item" wx:if="{{!isApprover}}" bindtap="goToResult">
+        <view class="action-icon icon-result">📋</view>
+        <view class="action-label">审批结果</view>
+      </view>
+      <view class="action-item" wx:if="{{isApprover}}" bindtap="goToApprovalList">
+        <view class="action-icon icon-approval">✅</view>
+        <view class="action-label">待审批</view>
+      </view>
+      <view class="action-item" wx:if="{{isApprover}}" bindtap="goToApprovalHistory">
+        <view class="action-icon icon-history">📊</view>
+        <view class="action-label">审批记录</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 欢迎弹窗 -->
+  <view class="modal-overlay" wx:if="{{showWelcome}}" catchtouchmove="preventMove">
+    <view class="modal-content">
+      <view class="modal-title">温馨提示</view>
+      <view class="welcome-text">{{welcomeMessage}}</view>
+      <view class="modal-footer">
+        <button class="btn btn-primary" style="width: 300rpx" bindtap="closeWelcome">我知道了</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,97 @@
+/* 审批详情页样式 */
+.page-approval-detail {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20rpx;
+  padding-bottom: 200rpx;
+}
+
+.detail-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.detail-item {
+  width: 50%;
+  padding: 12rpx 0;
+}
+
+.detail-item.full-width {
+  width: 100%;
+}
+
+.detail-label {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.companion-list {
+  margin-top: 10rpx;
+}
+
+.companion-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 26rpx;
+}
+
+.companion-id {
+  color: #999;
+}
+
+.record-item {
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+  margin-bottom: 8rpx;
+}
+
+.record-comment {
+  font-size: 26rpx;
+  color: #666;
+  padding: 8rpx 0;
+}
+
+.record-time {
+  font-size: 24rpx;
+  color: #bbb;
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 16rpx 30rpx 30rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
+}
+
+.action-bar .form-textarea {
+  min-height: 70rpx;
+  height: 70rpx;
+}
+
+.action-buttons {
+  display: flex;
+  margin-top: 12rpx;
+}
