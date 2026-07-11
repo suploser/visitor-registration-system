@@ -1,6 +1,7 @@
 // 访客登记页逻辑
 const api = require('../../utils/api');
 const constants = require('../../utils/constants');
+const subscribe = require('../../utils/subscribe');
 
 Page({
   data: {
@@ -238,6 +239,8 @@ Page({
       };
       const res = await api.post('/api/visitor/register', formData);
       if (res.code === 0) {
+        // 提交成功后尝试获取订阅消息授权（余量充足时不弹窗）
+        subscribe.subscribeResultNotice();
         wx.showModal({
           title: '提交成功',
           content: '您的访客登记申请已提交，请等待审批。',

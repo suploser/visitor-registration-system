@@ -1,5 +1,6 @@
 // 待审批列表逻辑
 const api = require('../../utils/api');
+const subscribe = require('../../utils/subscribe');
 const app = getApp();
 
 Page({
@@ -25,6 +26,8 @@ Page({
       this.getTabBar().setData({ selected: 1, role: app.globalData.role || 'visitor' });
     }
     this.loadList();
+    // 进入待审批列表时尝试获取订阅消息授权（余量充足时不弹窗）
+    subscribe.subscribeApprovalNotices();
   },
 
   async loadList() {
