@@ -26,18 +26,25 @@ CORS(app, supports_credentials=True)
 from models import db
 db.init_app(app)
 
+# 通知系统（仅生产环境启用，通过 SQLAlchemy 事件自动触发）
+from services.notification import init_notification
+
+init_notification(app)
+
 # 注册路由
 from routes.auth import auth_bp
 from routes.visitor import visitor_bp
 from routes.approver import approver_bp
 from routes.admin import admin_bp
 from routes.system import system_bp
+from routes.notification import notification_bp
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(visitor_bp, url_prefix='/api/visitor')
 app.register_blueprint(approver_bp, url_prefix='/api/approver')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(system_bp, url_prefix='/api')
+app.register_blueprint(notification_bp, url_prefix='/api/notification')
 
 
 # ========== 定时任务：清理过期会话 ==========
