@@ -1,6 +1,7 @@
 -- ============================================================
 -- 微信订阅消息通知系统 - 数据库迁移
--- 执行: mysql -u root -p visitor_prod < add_notification_tables.sql
+-- 执行: mysql -u visitor -p visitor_prod < add_notification_tables.sql
+-- 执行: mysql -u root -p visitor_dev < add_notification_tables.sql
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS `notification_subscriptions` (
