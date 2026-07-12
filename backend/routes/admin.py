@@ -1,7 +1,7 @@
 """
 管理员相关接口
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from flask import Blueprint, request, jsonify, send_file, g
 
@@ -47,6 +47,64 @@ def list_visitors():
             'pages': pagination.pages,
         }
     })
+
+
+@admin_bp.route('/visitors/<int:visitor_id>/decrypted', methods=['POST'])
+@admin_required
+def get_visitor_decrypted(visitor_id):
+    """查看访客解密后的手机号和身份证号（需管理员密码二次验证）"""
+    data = request.get_json() or {}
+    password = data.get('password', '')
+
+    if not password:
+        return jsonify({'code': 400, 'message': '请输入管理员密码'}), 400
+
+    admin = Admin.query.get(g.current_user.get('user_id'))
+    if not admin:
+        return jsonify({'code': 404, 'message': '管理员不存在'}), 404
+
+    # 锁定检查（复用登录锁定机制）
+    if admin.is_locked():
+        remaining = admin.lockout_remaining_minutes()
+        db.session.commit()
+        return jsonify({
+            'code': 423,
+            'message': f'账户已被锁定，请在 {remaining} 分钟后重试',
+            'lockout_remaining_minutes': remaining,
+        }), 423
+
+    # 密码验证
+    if not verify_password(password, admin.password_hash):
+        admin.failed_attempts = (admin.failed_attempts or 0) + 1
+        remaining_attempts = config.MAX_LOGIN_ATTEMPTS - admin.failed_attempts
+
+        if admin.failed_attempts >= config.MAX_LOGIN_ATTEMPTS:
+            admin.locked_until = datetime.utcnow() + timedelta(minutes=config.LOGIN_LOCKOUT_MINUTES)
+            db.session.commit()
+            return jsonify({
+                'code': 423,
+                'message': f'密码错误次数过多，账户已被锁定 {config.LOGIN_LOCKOUT_MINUTES} 分钟',
+                'lockout_remaining_minutes': config.LOGIN_LOCKOUT_MINUTES,
+            }), 423
+
+        db.session.commit()
+        return jsonify({
+            'code': 401,
+            'message': f'密码错误，还剩 {remaining_attempts} 次尝试机会',
+            'remaining_attempts': remaining_attempts,
+        }), 401
+
+    # 密码正确：重置失败计数
+    admin.failed_attempts = 0
+    admin.locked_until = None
+    db.session.commit()
+
+    visitor = Visitor.query.get(visitor_id)
+    if not visitor:
+        return jsonify({'code': 404, 'message': '访客记录不存在'}), 404
+
+    detail = visitor.to_dict(decrypt=True)
+    return jsonify({'code': 0, 'data': detail})
 
 
 @admin_bp.route('/approvals', methods=['GET'])
