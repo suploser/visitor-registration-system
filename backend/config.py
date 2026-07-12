@@ -32,6 +32,10 @@ class Config:
     PASSWORD_EXPIRY_DAYS = 7            # 密码7天必须修改
     ADMIN_TOKEN_EXPIRY_MINUTES = 10     # 管理员登录超时10分钟
 
+    # 管理员登录安全
+    MAX_LOGIN_ATTEMPTS = 3              # 连续密码错误 N 次后锁定账户
+    LOGIN_LOCKOUT_MINUTES = 30          # 锁定持续时间（分钟）
+
     # SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

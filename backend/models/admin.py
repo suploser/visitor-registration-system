@@ -13,6 +13,11 @@ class Admin(db.Model):
     last_password_change = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, server_default=db.func.current_timestamp())
 
+    # 登录安全字段
+    failed_attempts = db.Column(db.Integer, default=0)
+    locked_until = db.Column(db.DateTime)
+    session_token = db.Column(db.String(64))
+
     def set_password(self, password):
         """设置密码哈希"""
         self.password_hash = hash_password(password)
@@ -23,6 +28,25 @@ class Admin(db.Model):
         if not self.last_password_change:
             return True
         return datetime.utcnow() - self.last_password_change > timedelta(days=expiry_days)
+
+    def is_locked(self) -> bool:
+        """检查账户是否处于锁定状态（锁定过期自动清除）"""
+        if not self.locked_until:
+            return False
+        if datetime.utcnow() >= self.locked_until:
+            self.locked_until = None
+            self.failed_attempts = 0
+            return False
+        return True
+
+    def lockout_remaining_minutes(self) -> int:
+        """返回剩余锁定分钟数（向上取整，最小 1）"""
+        if not self.locked_until:
+            return 0
+        remaining = (self.locked_until - datetime.utcnow()).total_seconds()
+        if remaining <= 0:
+            return 0
+        return max(1, int(remaining / 60) + (1 if remaining % 60 > 0 else 0))
 
     def to_dict(self):
         return {

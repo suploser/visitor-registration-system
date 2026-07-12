@@ -430,6 +430,17 @@ function api(method, url, data = null) {
   };
   if (data) opts.body = JSON.stringify(data);
   return fetch(API + url, opts).then(r => {
+    // 会话冲突：其他设备登录导致当前会话被终止
+    if (r.status === 409) {
+      return r.json().then(body => {
+        if (body.session_conflict) {
+          alert(body.message);
+          localStorage.clear();
+          window.location.href = '/admin/login.html';
+        }
+        return { code: 409, message: body.message, session_conflict: true };
+      });
+    }
     if (r.status === 401) { localStorage.clear(); window.location.href = '/admin/login.html'; }
     return r.json().then(body => {
       // 密码过期：强制跳转到修改密码页

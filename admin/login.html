@@ -104,7 +104,7 @@
   <script>
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const username = document.getElementById('username').value;
+      const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('errorMsg');
 
@@ -123,6 +123,7 @@
           }
           window.location.href = '/admin/index.html';
         } else {
+          // 显示锁定、剩余尝试次数或通用错误消息
           errorEl.textContent = data.message || '登录失败';
           errorEl.style.display = 'block';
         }

@@ -153,13 +153,14 @@ def change_password():
     admin.set_password(new_password)
     db.session.commit()
 
-    # 密码修改后签发新token（清除pw_expired标记）
+    # 密码修改后签发新token（清除pw_expired标记，保持当前session_token）
     from routes.auth import generate_jwt
     new_token = generate_jwt({
         'user_id': admin.id,
         'username': admin.username,
         'role': 'admin',
         'pw_expired': False,
+        'session_token': admin.session_token,
     }, expires_minutes=config.ADMIN_TOKEN_EXPIRY_MINUTES)
 
     return jsonify({

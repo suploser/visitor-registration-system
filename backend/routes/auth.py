@@ -61,12 +61,24 @@ def login_required(f):
 
 
 def admin_required(f):
-    """管理员认证装饰器（含密码过期检查：过期后仅允许修改密码）"""
+    """管理员认证装饰器（含密码过期检查+单会话强制）"""
     @wraps(f)
     @login_required
     def decorated(*args, **kwargs):
         if g.current_user.get('role') != 'admin':
             return jsonify({'code': 403, 'message': '需要管理员权限'}), 403
+
+        # --- 单会话强制检查（新登录踢旧会话）---
+        jwt_session_token = g.current_user.get('session_token')
+        if jwt_session_token:
+            admin = Admin.query.get(g.current_user.get('user_id'))
+            if admin and admin.session_token and admin.session_token != jwt_session_token:
+                return jsonify({
+                    'code': 409,
+                    'message': '管理员已在其他设备登录，您已被强制下线。',
+                    'session_conflict': True,
+                }), 409
+
         # 密码过期时仅允许调用修改密码接口
         if g.current_user.get('pw_expired'):
             if not request.path.endswith('/api/admin/password'):
@@ -170,7 +182,7 @@ def wechat_login():
 
 @auth_bp.route('/admin-login', methods=['POST'])
 def admin_login():
-    """管理员登录（含密码过期检查，过期需强制修改）"""
+    """管理员登录（含密码过期检查、锁定检查、单会话强制）"""
     data = request.get_json() or {}
     username = data.get('username', '').strip()
     password = data.get('password', '')
@@ -182,9 +194,47 @@ def admin_login():
     if not admin:
         return jsonify({'code': 401, 'message': '用户名或密码错误'}), 401
 
+    # --- 锁定检查（账户级，3 次输错锁定 30 分钟）---
+    if admin.is_locked():
+        remaining = admin.lockout_remaining_minutes()
+        db.session.commit()  # 持久化锁定过期自动清除的变更
+        return jsonify({
+            'code': 423,
+            'message': f'账户已被锁定，请在 {remaining} 分钟后重试',
+            'locked_until': admin.locked_until.isoformat() if admin.locked_until else None,
+            'lockout_remaining_minutes': remaining,
+        }), 423
+
+    # --- 密码验证 ---
     from services.crypto import verify_password
     if not verify_password(password, admin.password_hash):
-        return jsonify({'code': 401, 'message': '用户名或密码错误'}), 401
+        admin.failed_attempts = (admin.failed_attempts or 0) + 1
+        remaining_attempts = config.MAX_LOGIN_ATTEMPTS - admin.failed_attempts
+
+        if admin.failed_attempts >= config.MAX_LOGIN_ATTEMPTS:
+            admin.locked_until = datetime.utcnow() + timedelta(minutes=config.LOGIN_LOCKOUT_MINUTES)
+            db.session.commit()
+            return jsonify({
+                'code': 423,
+                'message': f'密码错误次数过多，账户已被锁定 {config.LOGIN_LOCKOUT_MINUTES} 分钟',
+                'locked_until': admin.locked_until.isoformat(),
+                'lockout_remaining_minutes': config.LOGIN_LOCKOUT_MINUTES,
+            }), 423
+
+        db.session.commit()
+        return jsonify({
+            'code': 401,
+            'message': f'用户名或密码错误，还剩 {remaining_attempts} 次尝试机会',
+            'remaining_attempts': remaining_attempts,
+        }), 401
+
+    # --- 登录成功：重置锁定计数器 ---
+    admin.failed_attempts = 0
+    admin.locked_until = None
+
+    # --- 生成新 session_token（单会话强制：新登录踢旧会话）---
+    admin.session_token = str(uuid.uuid4())
+    db.session.commit()
 
     # 检查密码是否过期（超过7天未修改）
     password_expired = admin.is_password_expired(config.PASSWORD_EXPIRY_DAYS)
@@ -194,6 +244,7 @@ def admin_login():
         'username': admin.username,
         'role': 'admin',
         'pw_expired': password_expired,
+        'session_token': admin.session_token,
     }, expires_minutes=config.ADMIN_TOKEN_EXPIRY_MINUTES)
 
     return jsonify({
