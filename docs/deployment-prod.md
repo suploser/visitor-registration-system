@@ -69,18 +69,18 @@ pip install gunicorn
 创建 `/opt/visitor-system/.env`：
 ```bash
 export ENV=production
-export SECRET_KEY=704e2cf0aeaf2537c4ed5cbb14b224bf5e6be8797c9f92f334984a15afa1b193
-export AES_KEY=1bd1285eab32273a05cb0d5a3311a523
-export AES_IV=a1e8cb2f42e87118
+export SECRET_KEY=xxx
+export AES_KEY=xxx
+export AES_IV=xxx
 export DB_USER=visitor
 export DB_PASSWORD=strong_password_here
 export DB_HOST=127.0.0.1
 export DB_NAME=visitor_prod
 export PORT=5000
 export JWT_EXPIRATION_HOURS=2
-export EXCEL_PASSWORD=visitor2026
-export WECHAT_APPID=wx4bd913da991990b9
-export WECHAT_SECRET=06f6ad21dfedca535506489a0acb6034
+export EXCEL_PASSWORD=xxx
+export WECHAT_APPID=xxx
+export WECHAT_SECRET=xxx
 ```
 
 ### 2.4 Gunicorn 配置
