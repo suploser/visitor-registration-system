@@ -69,18 +69,18 @@ pip install gunicorn
 创建 `/opt/visitor-system/.env`：
 ```bash
 export ENV=production
-export SECRET_KEY="使用 openssl rand -hex 32 生成的随机字符串"
-export AES_KEY="使用 openssl rand -hex 16 生成的32字节密钥"
-export AES_IV="使用 openssl rand -hex 8 生成的16字节IV"
+export SECRET_KEY=704e2cf0aeaf2537c4ed5cbb14b224bf5e6be8797c9f92f334984a15afa1b193
+export AES_KEY=1bd1285eab32273a05cb0d5a3311a523
+export AES_IV=a1e8cb2f42e87118
 export DB_USER=visitor
 export DB_PASSWORD=strong_password_here
 export DB_HOST=127.0.0.1
 export DB_NAME=visitor_prod
 export PORT=5000
 export JWT_EXPIRATION_HOURS=2
-export EXCEL_PASSWORD="复杂的Excel密码"
-export WECHAT_APPID=wx_your_appid
-export WECHAT_SECRET=your_app_secret
+export EXCEL_PASSWORD=visitor2026
+export WECHAT_APPID=wx4bd913da991990b9
+export WECHAT_SECRET=06f6ad21dfedca535506489a0acb6034
 ```
 
 ### 2.4 Gunicorn 配置
@@ -96,7 +96,17 @@ loglevel = "info"
 ```
 
 ### 2.5 Supervisor 配置
+
+先创建日志目录（必须，否则 supervisor 无法启动 program）：
+```bash
+sudo mkdir -p /var/log/visitor
+```
+
 创建 `/etc/supervisord.d/visitor.ini`：
+
+> ⚠️ **关键**：supervisor 不会 source shell 的 `.env` 文件，所有环境变量必须写在 `environment` 行中，
+> 用逗号分隔。缺少任何一个变量都会导致 app 启动失败（spawn error）。
+
 ```ini
 [program:visitor]
 command=/opt/visitor-system/backend/venv/bin/gunicorn -c /opt/visitor-system/gunicorn.conf.py app:app
@@ -106,7 +116,7 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/visitor/supervisor_err.log
 stdout_logfile=/var/log/visitor/supervisor_out.log
-environment=ENV="production"
+environment=ENV="production",SECRET_KEY="704e2cf0aeaf2537c4ed5cbb14b224bf5e6be8797c9f92f334984a15afa1b193",AES_KEY="1bd1285eab32273a05cb0d5a3311a523",AES_IV="a1e8cb2f42e87118",DB_USER="visitor",DB_PASSWORD="strong_password_here",DB_HOST="127.0.0.1",DB_NAME="visitor_prod",JWT_EXPIRATION_HOURS="2",EXCEL_PASSWORD="visitor2026",WECHAT_APPID="wx4bd913da991990b9",WECHAT_SECRET="06f6ad21dfedca535506489a0acb6034"
 ```
 
 ```bash
@@ -212,14 +222,26 @@ sudo systemctl reload nginx
 ## 五、故障处理
 
 ### 应用无法启动
+
 ```bash
-# 检查日志
-sudo tail -f /var/log/visitor/error.log
-# 检查端口
-sudo netstat -tlnp | grep 5000
-# 手动启动测试
+# 1. 查看 supervisor 错误日志（spawn error 的详细信息在这里）
+sudo tail -50 /var/log/visitor/supervisor_err.log
+
+# 2. 手动启动测试（能直接看到 py 报错）
 cd /opt/visitor-system/backend && source venv/bin/activate && python app.py
+
+# 3. 检查 gunicorn 是否安装
+/opt/visitor-system/backend/venv/bin/pip list | grep gunicorn
 ```
+
+常见 spawn error 原因：
+| 日志关键字 | 原因 | 修复 |
+|-----------|------|------|
+| `No module named 'xxx'` | 缺少依赖 | `venv/bin/pip install -r requirements.txt` |
+| `Can't connect to MySQL` | 数据库连不上 / 密码错误 | 检查 DB_HOST/DB_PASSWORD 环境变量 |
+| `gunicorn: command not found` | venv 中未装 gunicorn | `venv/bin/pip install gunicorn` |
+| `No such file or directory` | venv 路径不对 | 检查 venv 是否在 `/opt/visitor-system/backend/venv/` |
+| `Permission denied` | nobody 用户无权限 | `sudo chown -R nobody:nobody /opt/visitor-system` |
 
 ### 数据库连接失败
 ```bash
