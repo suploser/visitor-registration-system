@@ -116,7 +116,7 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/visitor/supervisor_err.log
 stdout_logfile=/var/log/visitor/supervisor_out.log
-environment=ENV="production",SECRET_KEY="704e2cf0aeaf2537c4ed5cbb14b224bf5e6be8797c9f92f334984a15afa1b193",AES_KEY="1bd1285eab32273a05cb0d5a3311a523",AES_IV="a1e8cb2f42e87118",DB_USER="visitor",DB_PASSWORD="strong_password_here",DB_HOST="127.0.0.1",DB_NAME="visitor_prod",JWT_EXPIRATION_HOURS="2",EXCEL_PASSWORD="visitor2026",WECHAT_APPID="wx4bd913da991990b9",WECHAT_SECRET="06f6ad21dfedca535506489a0acb6034"
+environment=ENV="production",SECRET_KEY="xxx",AES_KEY="1bd1285eab32273a05cb0d5a3311a523",AES_IV="xxx",DB_PASSWORD="strong_password_here",DB_HOST="127.0.0.1",DB_NAME="visitor_prod",JWT_EXPIRATION_HOURS="2",EXCEL_PASSWORD="xxx",WECHAT_APPID="xxx",WECHAT_SECRET="xxx"
 ```
 
 ```bash
