@@ -116,7 +116,7 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/visitor/supervisor_err.log
 stdout_logfile=/var/log/visitor/supervisor_out.log
-environment=ENV="production",SECRET_KEY="xxx",AES_KEY="1bd1285eab32273a05cb0d5a3311a523",AES_IV="xxx",DB_PASSWORD="strong_password_here",DB_HOST="127.0.0.1",DB_NAME="visitor_prod",JWT_EXPIRATION_HOURS="2",EXCEL_PASSWORD="xxx",WECHAT_APPID="xxx",WECHAT_SECRET="xxx"
+environment=ENV="production",SECRET_KEY="xxx",AES_KEY="1bd1285eab32273a05cb0d5a3311a523",AES_IV="xxx",DB_PASSWORD="strong_password_here",DB_HOST="127.0.0.1",DB_NAME="visitor_prod",JWT_EXPIRATION_HOURS="2",EXCEL_PASSWORD="xxx",WECHAT_APPID="xxx",WECHAT_SECRET="xxx",WX_TMPL_APPROVAL_NOTICE="xxx",WX_TMPL_RESULT_NOTICE="xxx"
 ```
 
 ```bash
